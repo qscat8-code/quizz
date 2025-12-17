@@ -18,9 +18,9 @@
 
 <div id="userData">
   <p>Пожалуйста, укажите ваши данные перед началом викторины:</p>
-  <label>Имя: <input type="text" id="firstName"></label>
-  <label>Фамилия: <input type="text" id="lastName"></label>
-  <label>Контакт (ссылка на источник): <input type="text" id="contact"></label>
+  <label>Имя: <input type="text" id="firstName"></label><br>
+  <label>Фамилия: <input type="text" id="lastName"></label><br>
+  <label>Контакт (ссылка на источник): <input type="text" id="contact"></label><br><br>
   <button id="startBtn">Начать викторину</button>
 </div>
 
@@ -56,17 +56,19 @@ const questions = [
   { type: "text", text: "Вопрос 15. Перед вами герб одной северной провинции. Как видите, на ней изображён мужик с дубиной. А ещё эта провинция является родиной другого мужика, у которого обычно дубины нет. Зато \"дубина\" есть у его коллеги из соседней страны.\n\nГерб какой провинции изображён на картинке?", image: "images/Снимоквы.JPG", correct: "Лапландия", points: 5 }
 ];
 
-// ------------------- Переменные викторины -------------------
+// ------------------- ПЕРЕМЕННЫЕ -------------------
 let current = 0;
 let score = 0;
 let timer;
-let timeLeft = 120; // 2 минуты
+let timeLeft = 120;
+
+// ★ ДОБАВЛЕНО
 let userAnswers = [];
 let userFirstName = "";
 let userLastName = "";
-let userContact = ""
+let userContact = "";
 
-// ------------------- HTML элементы -------------------
+// ------------------- HTML -------------------
 const startBtn = document.getElementById("startBtn");
 const userDataDiv = document.getElementById("userData");
 const quizDiv = document.getElementById("quiz");
@@ -77,21 +79,23 @@ const timerDisplay = document.getElementById("timer");
 const resultDiv = document.getElementById("result");
 const scoreDisplay = document.getElementById("score");
 
-// ------------------- Старт викторины -------------------
+// ------------------- СТАРТ -------------------
 startBtn.onclick = () => {
-  const firstName = document.getElementById("firstName").value.trim();
-  const lastName = document.getElementById("lastName").value.trim();
-  const contact = document.getElementById("contact").value.trim();
-  if (!firstName || !lastName || !contact) {
+  userFirstName = document.getElementById("firstName").value.trim();
+  userLastName = document.getElementById("lastName").value.trim();
+  userContact = document.getElementById("contact").value.trim();
+
+  if (!userFirstName || !userLastName || !userContact) {
     alert("Пожалуйста, заполните все поля.");
     return;
   }
+
   userDataDiv.style.display = "none";
   quizDiv.style.display = "block";
   loadQuestion();
 };
 
-// ------------------- Загрузка вопроса -------------------
+// ------------------- ЗАГРУЗКА ВОПРОСА -------------------
 function loadQuestion() {
   if (current >= questions.length) {
     finishQuiz();
@@ -105,7 +109,6 @@ function loadQuestion() {
   if (q.image) {
     const img = document.createElement("img");
     img.src = q.image;
-    img.alt = "Изображение вопроса";
     questionText.appendChild(document.createElement("br"));
     questionText.appendChild(img);
   }
@@ -116,19 +119,19 @@ function loadQuestion() {
       label.innerHTML = `<input type="radio" name="answer" value="${opt}"> ${opt}`;
       answers.appendChild(label);
     });
-  } else if (q.type === "text" || q.type === "text-multiple") {
+  } else {
     answers.innerHTML = `<input type="text" id="textAnswer" style="width:100%">`;
   }
 
-  // Таймер
   timeLeft = 120;
   timerDisplay.textContent = "2:00";
   clearInterval(timer);
+
   timer = setInterval(() => {
     timeLeft--;
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    timerDisplay.textContent = `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    timerDisplay.textContent = `${m}:${s < 10 ? "0"+s : s}`;
     if (timeLeft <= 0) {
       clearInterval(timer);
       nextQuestion();
@@ -136,7 +139,30 @@ function loadQuestion() {
   }, 1000);
 }
 
-// ------------------- Переход к следующему вопросу -------------------
+// ------------------- ПОДСЧЁТ БАЛЛОВ -------------------
+function calculatePoints(q, answer) {
+  if (!answer) return 0;
+
+  if (q.type === "choice") return answer === q.correct ? q.points : 0;
+
+  if (q.type === "text") {
+    if (Array.isArray(q.correct)) {
+      return q.correct.some(c => c.toLowerCase() === answer.toLowerCase()) ? q.points : 0;
+    }
+    return answer.toLowerCase() === q.correct.toLowerCase() ? q.points : 0;
+  }
+
+  if (q.type === "text-multiple") {
+    const arr = answer.split(",").map(a => a.trim().toLowerCase());
+    let pts = 0;
+    q.correct.forEach(c => { if (arr.includes(c.toLowerCase())) pts++; });
+    return pts;
+  }
+
+  return 0;
+}
+
+// ------------------- СЛЕДУЮЩИЙ ВОПРОС -------------------
 nextBtn.onclick = nextQuestion;
 
 function nextQuestion() {
@@ -145,31 +171,17 @@ function nextQuestion() {
   let answer = "";
 
   if (q.type === "choice") {
-    const selected = document.querySelector('input[name="answer"]:checked');
-    if (selected) answer = selected.value;
+    const sel = document.querySelector('input[name="answer"]:checked');
+    if (sel) answer = sel.value;
   } else {
     answer = document.getElementById("textAnswer").value.trim();
   }
 
-  // Проверка ответа
-  if (q.type === "choice") {
-    if (answer === q.correct) score += q.points;
-  } else if (q.type === "text") {
-    if (Array.isArray(q.correct)) {
-      if (q.correct.some(c => c.toLowerCase() === answer.toLowerCase())) score += q.points;
-    } else if (answer.toLowerCase() === q.correct.toLowerCase()) score += q.points;
-  } else if (q.type === "text-multiple") {
-    const answersArray = answer.split(',').map(a => a.trim().toLowerCase());
-    q.correct.forEach(c => {
-      if (answersArray.includes(c.toLowerCase())) score += 1;
-    });
-  }
+  const earned = calculatePoints(q, answer);
+  score += earned;
 
-  current++;
-  loadQuestion();
-}
-
-userAnswers.push({
+  // ★ ДОБАВЛЕНО — сохраняем статистику
+  userAnswers.push({
     number: current + 1,
     question: q.text,
     userAnswer: answer || "(нет ответа)",
@@ -179,16 +191,18 @@ userAnswers.push({
 
   current++;
   loadQuestion();
-  }
+}
 
-// ------------------- Завершение викторины -------------------
+// ------------------- ФИНИШ -------------------
 function finishQuiz() {
   quizDiv.style.display = "none";
   resultDiv.style.display = "block";
-  scoreDisplay.textContent = `Вы набрали ${score} баллов из возможных ${questions.reduce((acc,q)=>acc+q.points,0)}.`;
-}
 
-fetch("https://script.google.com/macros/s/AKfycbxBbxUJfZxQIg2GPiES6jIYO9IG0iumiLacdSQhj0QSy4Qhfdg4unS9OHverTnvNJY/exec", {
+  const maxScore = questions.reduce((a,q)=>a+q.points,0);
+  scoreDisplay.textContent = `Вы набрали ${score} баллов из возможных ${maxScore}.`;
+
+  // ★ ОТПРАВКА НА GOOGLE SCRIPT
+  fetch("https://script.google.com/macros/s/AKfycbxBbxUJfZxQIg2GPiES6jIYO9IG0iumiLacdSQhj0QSy4Qhfdg4unS9OHverTnvNJY/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -200,12 +214,8 @@ fetch("https://script.google.com/macros/s/AKfycbxBbxUJfZxQIg2GPiES6jIYO9IG0iumiL
       answers: userAnswers
     })
   }).catch(err => console.error(err));
-  }
-  
+}
 </script>
 
 </body>
 </html>
-
-
-
