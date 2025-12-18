@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Полярная викторина</title>
 <style>
 body { font-family: Arial; max-width:800px; margin:auto; padding:20px }
@@ -16,10 +17,63 @@ body { font-family: Arial; max-width:800px; margin:auto; padding:20px }
   border-left:4px solid #333;
 }
 img { max-width:100%; margin-top:10px }
+/* ====== АДАПТИВ ====== */
+
+.container {
+  max-width: 900px;
+  width: 100%;
+  margin: auto;
+  padding: 16px;
+}
+
+input, button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+#answers label {
+  font-size: 16px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* ====== МОБИЛЬНАЯ ВЕРСИЯ ====== */
+@media (max-width: 600px) {
+
+  h1 {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  #question {
+    font-size: 16px;
+  }
+
+  #timer {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  button {
+    font-size: 15px;
+    padding: 12px;
+  }
+}
 </style>
 </head>
 <body>
 
+<div class="container">
 <h1>Полярная викторина</h1>
 
 <div id="userData">
@@ -37,8 +91,8 @@ img { max-width:100%; margin-top:10px }
   <button id="nextBtn">Следующий вопрос</button>
 </div>
 
-<div id="result" style="display:none">
-  <h2 id="finalScore"></h2>
+<div id="result" style="display:none;text-align:center">
+  <h2 id="score"></h2>
 </div>
 
 <script>
@@ -116,10 +170,18 @@ function loadQuestion(){
   aDiv.innerHTML="";
   if(q.type==="choice"){
     q.options.forEach(o=>{
-      aDiv.innerHTML+=`<label><input type="radio" name="answer" value="${o}"> ${o}</label>`;
+      aDiv.innerHTML+=`
+<label style="padding:10px;border:1px solid #ccc;border-radius:8px">
+  <input type="radio" name="answer" value="${o}">
+  ${o}
+</label>`;
     });
   } else {
-    aDiv.innerHTML=`<input id="textAnswer" style="width:100%">`;
+    aDiv.innerHTML = `
+<input id="textAnswer"
+  placeholder="Введите ответ"
+  style="width:100%;padding:12px;font-size:16px">
+`;
   }
 
   clearInterval(timer);
@@ -196,6 +258,7 @@ function finish(){
 }
 
 </script>
+</div>
 </body>
 </html>
 
