@@ -174,9 +174,8 @@ function finishQuiz() {
   scoreDisplay.textContent = `Ваш результат: ${score} из ${maxScore}`;
 
   // 🚀 ОТПРАВКА В GOOGLE SHEETS
-  fetch("https://script.google.com/macros/s/AKfycbxZmrBGLjEZY7Vqeqstadx-7wJwc6_lIElSTnvDmCGmLj7JD7lSotv1k1LXpHQKdeYU/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbyq08E3OLptZDe0HWYmzE3oK4XEyB66U0bOlrA_u-uBnm419ELLpEcMWEAbk9MnqRp-/exec", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       firstName: userFirstName,
       lastName: userLastName,
@@ -185,9 +184,13 @@ function finishQuiz() {
       maxScore: maxScore,
       answers: userAnswers
     })
-  });
+  })
+  .then(r => r.text())
+  .then(t => console.log("Ответ сервера:", t))
+  .catch(e => console.error("FETCH ERROR", e));
 }
 </script>
 
 </body>
 </html>
+
