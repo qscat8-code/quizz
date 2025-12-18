@@ -103,35 +103,50 @@ function loadQuestion() {
   }
 
   const q = questions[current];
-  questionText.innerHTML = q.text;
-  answersDiv.innerHTML = "";
 
+  // Очистка и вставка текста
+  questionText.innerHTML = "";
+  const p = document.createElement("p");
+  p.textContent = q.text;
+  questionText.appendChild(p);
+
+  // Картинка
+  if (q.image) {
+    const img = document.createElement("img");
+    img.src = q.image;
+    img.alt = "Изображение вопроса";
+    questionText.appendChild(img);
+  }
+
+  // Ответы
+  answersDiv.innerHTML = "";
   if (q.type === "choice") {
     q.options.forEach(opt => {
-      answersDiv.innerHTML += `
-        <label>
-          <input type="radio" name="answer" value="${opt}"> ${opt}
-        </label>`;
+      const label = document.createElement("label");
+      label.innerHTML = `<input type="radio" name="answer" value="${opt}"> ${opt}`;
+      answersDiv.appendChild(label);
     });
   } else {
     answersDiv.innerHTML = `<input type="text" id="textAnswer" style="width:100%">`;
   }
 
-  startTimer();
-}
-
-// ================== ТАЙМЕР ==================
-function startTimer() {
+  // Таймер
   clearInterval(timer);
   timeLeft = 120;
-  timerDisplay.textContent = "2:00";
-
-  timer = setInterval(() => {
+  const updateTimer = () => {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerDisplay.textContent = `${minutes}:${seconds < 10 ? "0"+seconds : seconds}`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      nextQuestion();
+    }
     timeLeft--;
-    timerDisplay.textContent = `1:${timeLeft < 10 ? "0"+timeLeft : timeLeft}`;
-    if (timeLeft <= 0) nextQuestion();
-  }, 1000);
+  };
+  updateTimer();
+  timer = setInterval(updateTimer, 1000);
 }
+
 
 // ================== СЛЕДУЮЩИЙ ВОПРОС ==================
 nextBtn.onclick = nextQuestion;
@@ -202,6 +217,7 @@ function finishQuiz() {
 
 </body>
 </html>
+
 
 
 
