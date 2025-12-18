@@ -179,26 +179,26 @@ function finish(){
   result.style.display="block";
   finalScore.textContent=`Результат: ${score}`;
   
-  fetch("https://script.google.com/macros/s/AKfycbyq08E3OLptZDe0HWYmzE3oK4XEyB66U0bOlrA_u-uBnm419ELLpEcMWEAbk9MnqRp-/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbwTWMqO1ra0Fi9MPVRAfaYJnsOwwE9tj0jUJ30RgGhLhRVP2o-U4hVPQLoR4E7GK6aB/exec", {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
+  mode: "no-cors",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: new URLSearchParams({
     firstName: firstName.value,
     lastName: lastName.value,
     contact: contact.value,
     score: score,
-    answers: userAnswers
+    answers: JSON.stringify(userAnswers)
   })
-})
-.then(r => r.text())
-.then(t => console.log("Server:", t))
-.catch(e => console.error("Fetch error:", e));
-
+});
 }
 
 </script>
 </body>
 </html>
+
 
 
 
