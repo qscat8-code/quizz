@@ -202,7 +202,7 @@ function finishQuiz() {
   scoreDisplay.textContent = `Вы набрали ${score} баллов из возможных ${maxScore}.`;
 
   // ★ ОТПРАВКА НА GOOGLE SCRIPT
-  fetch("https://script.google.com/macros/s/AKfycbxBbxUJfZxQIg2GPiES6jIYO9IG0iumiLacdSQhj0QSy4Qhfdg4unS9OHverTnvNJY/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbyWg9OI5pVq3P3wwZsbmn-UYXk1oJQv5DMs9VM4dIZJnsmMi7jY3pvdPgVhx9TIvj-Y/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -219,3 +219,4 @@ function finishQuiz() {
 
 </body>
 </html>
+
