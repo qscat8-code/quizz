@@ -38,7 +38,7 @@ img { max-width:100%; margin-top:10px }
 </div>
 
 <div id="result" style="display:none">
-  <h2 id="score"></h2>
+  <h2 id="finalScore"></h2>
 </div>
 
 <script>
@@ -91,6 +91,7 @@ const aDiv=document.getElementById("answers");
 const expl=document.getElementById("explanation");
 const nextBtn=document.getElementById("nextBtn");
 const timerDiv=document.getElementById("timer");
+const finalScore = document.getElementById("finalScore");
 
 // ================= СТАРТ =================
 startBtn.onclick=()=>{
@@ -176,11 +177,29 @@ function showExplanation(){
 function finish(){
   quiz.style.display="none";
   result.style.display="block";
-  score.textContent=`Результат: ${score}`;
+  finalScore.textContent=`Результат: ${score}`;
+  
+  fetch("https://script.google.com/macros/s/AKfycbyq08E3OLptZDe0HWYmzE3oK4XEyB66U0bOlrA_u-uBnm419ELLpEcMWEAbk9MnqRp-/exec", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    firstName: firstName.value,
+    lastName: lastName.value,
+    contact: contact.value,
+    score: score,
+    answers: userAnswers
+  })
+})
+.then(r => r.text())
+.then(t => console.log("Server:", t))
+.catch(e => console.error("Fetch error:", e));
+
 }
+
 </script>
 </body>
 </html>
+
 
 
 
