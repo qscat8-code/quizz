@@ -146,10 +146,19 @@ function nextQuestion() {
     const sel = document.querySelector('input[name="answer"]:checked');
     if (sel) answer = sel.value;
     if (answer === q.correct) earned = q.points;
+  } else if (q.type === "text") {
+  answer = document.getElementById("textAnswer").value.trim();
+
+  if (Array.isArray(q.correct)) {
+    if (q.correct.some(c => c.toLowerCase() === answer.toLowerCase())) {
+      earned = q.points;
+    }
   } else {
-    answer = document.getElementById("textAnswer").value.trim();
-    if (answer.toLowerCase() === q.correct.toLowerCase()) earned = q.points;
+    if (answer.toLowerCase() === q.correct.toLowerCase()) {
+      earned = q.points;
+    }
   }
+}
 
   score += earned;
 
@@ -193,4 +202,5 @@ function finishQuiz() {
 
 </body>
 </html>
+
 
