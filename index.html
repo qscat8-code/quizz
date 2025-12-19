@@ -156,7 +156,16 @@ function loadQuestion(){
   nextBtn.textContent = "Показать ответ";
 
   const q = questions[current];
+
+  // текст вопроса
   qDiv.innerHTML = `<p>${q.text}</p>`;
+
+  // картинка (ЕСЛИ ЕСТЬ)
+  if(q.image){
+    qDiv.innerHTML += `<img src="${q.image}" alt="Иллюстрация к вопросу">`;
+  }
+
+  // ответы
   aDiv.innerHTML = "";
 
   if(q.type === "choice"){
@@ -164,15 +173,22 @@ function loadQuestion(){
       aDiv.innerHTML += `
         <label>
           <input type="radio" name="answer" value="${o}"> ${o}
-        </label>`;
+        </label>
+      `;
     });
   } else {
-    aDiv.innerHTML = `<input id="textAnswer" placeholder="Введите ответ">`;
+    aDiv.innerHTML = `
+      <input id="textAnswer"
+             placeholder="Введите ответ"
+             style="width:100%;padding:12px;font-size:16px">
+    `;
   }
 
+  // таймер
   clearInterval(timer);
   timeLeft = 120;
   timerDiv.textContent = "2:00";
+
   timer = setInterval(()=>{
     timerDiv.textContent =
       `${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;
@@ -231,11 +247,13 @@ function finish(){
       firstName:firstName.value,
       lastName:lastName.value,
       contact:contact.value,
-      score:totalScore
+      score:totalScore,
+      answers: JSON.stringify(userAnswers)
     })
   });
 }
 </script>
 </body>
 </html>
+
 
