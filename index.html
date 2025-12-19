@@ -218,17 +218,42 @@ function showExplanation(){
   if(q.type === "choice"){
     const sel = document.querySelector("input[name='answer']:checked");
     if(sel) answer = sel.value;
-    if(answer === q.correct) earned = q.points;
-  } else {
-    answer = document.getElementById("textAnswer").value.trim();
-    if(q.correct.some(c=>c.toLowerCase()===answer.toLowerCase()))
+
+    if(answer === q.correct){
       earned = q.points;
+    }
+
+  } else {
+    const input = document.getElementById("textAnswer");
+    if(input) answer = input.value.trim();
+
+    // 🔧 ВАЖНОЕ ИСПРАВЛЕНИЕ
+    const correctAnswers = Array.isArray(q.correct)
+      ? q.correct
+      : [q.correct];
+
+    if(
+      correctAnswers.some(c =>
+        c.toLowerCase() === answer.toLowerCase()
+      )
+    ){
+      earned = q.points;
+    }
   }
 
   totalScore += earned;
+
+  // сохраняем ответ пользователя
+  userAnswers.push({
+    question: q.text,
+    answer: answer,
+    points: earned
+  });
+
   expl.style.display = "block";
   expl.innerHTML = `
-    <b>Комментарий:</b> ${comments[current+1] || "—"}<br>
+    <b>Правильный ответ:</b> ${Array.isArray(q.correct) ? q.correct.join(", ") : q.correct}<br><br>
+    <b>Комментарий:</b> ${comments[current+1] || "—"}<br><br>
     <b>Баллы:</b> ${earned}
   `;
 }
@@ -248,12 +273,14 @@ function finish(){
       lastName:lastName.value,
       contact:contact.value,
       score:totalScore,
-      answers: JSON.stringify(userAnswers)
-    })
+      answers: userAnswers.map(a =>
+      `${a.question} — ${a.answer} (${a.points})`
+    ).join(" | ")
   });
 }
 </script>
 </body>
 </html>
+
 
 
