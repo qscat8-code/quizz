@@ -4,81 +4,68 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Полярная викторина</title>
+
 <style>
-body { font-family: Arial; max-width:800px; margin:auto; padding:20px }
-#timer { color:red; font-weight:bold }
-#answers label { display:block; margin:5px 0 }
-#nextBtn { margin-top:15px; padding:10px 20px }
-#explanation {
-  display:none;
-  margin-top:15px;
-  padding:10px;
-  background:#f3f3f3;
-  border-left:4px solid #333;
-}
-img { max-width:100%; margin-top:10px }
-/* ====== АДАПТИВ ====== */
-
-.container {
+body {
+  font-family: Arial, sans-serif;
   max-width: 900px;
-  width: 100%;
   margin: auto;
-  padding: 16px;
+  padding: 20px;
 }
 
-input, button {
-  width: 100%;
-  box-sizing: border-box;
-}
+h1 { text-align: center; }
 
-button {
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 10px;
+#timer {
+  font-weight: bold;
+  color: red;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 #answers label {
+  display: block;
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
   font-size: 16px;
+  margin-top: 15px;
+  border-radius: 10px;
 }
 
 img {
   max-width: 100%;
-  height: auto;
   border-radius: 10px;
+  margin-top: 10px;
 }
 
-/* ====== МОБИЛЬНАЯ ВЕРСИЯ ====== */
-@media (max-width: 600px) {
+#explanation {
+  display: none;
+  margin-top: 15px;
+  padding: 12px;
+  background: #f3f3f3;
+  border-left: 4px solid #333;
+}
 
-  h1 {
-    font-size: 20px;
-    text-align: center;
-  }
-
-  #question {
-    font-size: 16px;
-  }
-
-  #timer {
-    font-size: 14px;
-    text-align: center;
-  }
-
-  button {
-    font-size: 15px;
-    padding: 12px;
-  }
+@media (max-width:600px) {
+  h1 { font-size: 20px; }
+  button { font-size: 15px; }
 }
 </style>
 </head>
+
 <body>
 
-<div class="container">
 <h1>Полярная викторина</h1>
 
 <div id="userData">
-  <input id="firstName" placeholder="Имя"><br>
-  <input id="lastName" placeholder="Фамилия"><br>
+  <input id="firstName" placeholder="Имя"><br><br>
+  <input id="lastName" placeholder="Фамилия"><br><br>
   <input id="contact" placeholder="Контакт"><br><br>
   <button id="startBtn">Начать</button>
 </div>
@@ -88,7 +75,7 @@ img {
   <div id="question"></div>
   <div id="answers"></div>
   <div id="explanation"></div>
-  <button id="nextBtn">Следующий вопрос</button>
+  <button id="nextBtn">Показать ответ</button>
 </div>
 
 <div id="result" style="display:none;text-align:center">
@@ -96,9 +83,9 @@ img {
 </div>
 
 <script>
-// ================= КОММЕНТАРИИ =================
+// ===== КОММЕНТАРИИ =====
 const comments = {
-1: "Фраза \"лучший ледокол — это ветер\" является метафорой, которая подразумевает, что сила природы, особенно ветер, может быть мощной и эффективной для преодоления ледяных препятствий, иногда даже более эффективной, чем специально построенные корабли. Эта метафора подчеркивает силу стихий и их способность справляться с тем, что кажется невозможным.",
+  1: "Фраза \"лучший ледокол — это ветер\" является метафорой, которая подразумевает, что сила природы, особенно ветер, может быть мощной и эффективной для преодоления ледяных препятствий, иногда даже более эффективной, чем специально построенные корабли. Эта метафора подчеркивает силу стихий и их способность справляться с тем, что кажется невозможным.",
 2: "Как вам известно, в Антарктиде для достижения труднодоступных станций, расположенных в глубине материка, используется гусеничный транспорт. В советское время это были тяжелые машины-тягачи, которые водили настоящие танкисты. Вот и праздник свой они привезли в Антарктиду.",
 3: "Руаль Амундсен написал эти строки после того, как достиг Южного полюса. Ведь изначально он планировал достичь Полюса Северного. Поэтому он и говорит о том, что стоит диаметрально противоположно от точки своих мечтаний.",
 4: "Действительно Пайер писал о том, что не было никакой возможности нормально заниматься, так как люди из задних рядов просто не видели, что написано на доске из-за плотной завесы пара",
@@ -114,7 +101,7 @@ const comments = {
 15: "В Лапландии как известно живет Йоулупукки, ну а для кого-то - Санта Клаус. Но дубинки у него нет. Зато дубинка (в виде посоха) имеется у нашего Деда Мороза"
 };
 
-// ================= ВОПРОСЫ =================
+// ===== ВОПРОСЫ (укорочены для примера) =====
 const questions = [
   { type: "choice", text: "Вопрос 1. Что, по мнению многих полярников, является лучшим ледоколом?", options: ["Ледокол «50 лет Победы»","Ветер","Айсберг","Солнце"], correct: "Ветер", points: 1 },
   { type: "choice", text: "Вопрос 2. Как известно, Антарктида является единственной территорией на планете, которая не принадлежит никому. Более того, на ней запрещено вести какую-либо военную деятельность, размещать воинские части и оружие. Но исторически так сложилось, что в Антарктиде, на российских станциях всё же празднуется один военный праздник. И в данном случае это не 9 мая и не 23 февраля. А что же это за праздник?", options: ["День военно-морского флота","День Авиации","День Десантника","День Танкиста"], correct: "День Танкиста", points: 2 },
@@ -133,139 +120,120 @@ const questions = [
   { type: "text", text: "Вопрос 15. Перед вами герб одной северной провинции. Как видите, на ней изображён мужик с дубиной. А ещё эта провинция является родиной другого мужика, у которого обычно дубины нет. Зато \"дубина\" есть у его коллеги из соседней страны.\n\nГерб какой провинции изображён на картинке?", image: "images/Снимоквы.JPG", correct: "Лапландия", points: 5 }
 ];
 
-// ================= ПЕРЕМЕННЫЕ =================
-let current=0, score=0, timer, timeLeft=120;
+// ===== ПЕРЕМЕННЫЕ =====
+let current = 0;
+let totalScore = 0;
+let timeLeft = 120;
+let timer;
 let showingExplanation = false;
-let userAnswers=[];
+let userAnswers = [];
 
-// ================= ЭЛЕМЕНТЫ =================
-const quiz=document.getElementById("quiz");
-const qDiv=document.getElementById("question");
-const aDiv=document.getElementById("answers");
-const expl=document.getElementById("explanation");
-const nextBtn=document.getElementById("nextBtn");
-const timerDiv=document.getElementById("timer");
-const finalScore = document.getElementById("finalScore");
+// ===== ЭЛЕМЕНТЫ =====
+const quiz = document.getElementById("quiz");
+const qDiv = document.getElementById("question");
+const aDiv = document.getElementById("answers");
+const expl = document.getElementById("explanation");
+const nextBtn = document.getElementById("nextBtn");
+const timerDiv = document.getElementById("timer");
 
-// ================= СТАРТ =================
-startBtn.onclick=()=>{
-  if(!firstName.value||!lastName.value||!contact.value){
-    alert("Все поля обязательны"); return;
+// ===== СТАРТ =====
+startBtn.onclick = () => {
+  if(!firstName.value || !lastName.value || !contact.value){
+    alert("Заполните все поля");
+    return;
   }
   userData.style.display="none";
   quiz.style.display="block";
   loadQuestion();
 };
 
-// ================= ВОПРОС =================
+// ===== ЗАГРУЗКА ВОПРОСА =====
 function loadQuestion(){
-  showingExplanation=false;
-  expl.style.display="none";
-  nextBtn.textContent="Следующий вопрос";
+  showingExplanation = false;
+  expl.style.display = "none";
+  nextBtn.textContent = "Показать ответ";
 
-  const q=questions[current];
-  qDiv.innerHTML=`<p>${q.text}</p>`;
-  if(q.image) qDiv.innerHTML+=`<img src="${q.image}">`;
+  const q = questions[current];
+  qDiv.innerHTML = `<p>${q.text}</p>`;
+  aDiv.innerHTML = "";
 
-  aDiv.innerHTML="";
-  if(q.type==="choice"){
+  if(q.type === "choice"){
     q.options.forEach(o=>{
-      aDiv.innerHTML+=`
-<label style="padding:10px;border:1px solid #ccc;border-radius:8px">
-  <input type="radio" name="answer" value="${o}">
-  ${o}
-</label>`;
+      aDiv.innerHTML += `
+        <label>
+          <input type="radio" name="answer" value="${o}"> ${o}
+        </label>`;
     });
   } else {
-    aDiv.innerHTML = `
-<input id="textAnswer"
-  placeholder="Введите ответ"
-  style="width:100%;padding:12px;font-size:16px">
-`;
+    aDiv.innerHTML = `<input id="textAnswer" placeholder="Введите ответ">`;
   }
 
   clearInterval(timer);
-  timeLeft=120;
-  timer=setInterval(()=>{
-    timerDiv.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;
-    if(--timeLeft<0) showExplanation();
+  timeLeft = 120;
+  timerDiv.textContent = "2:00";
+  timer = setInterval(()=>{
+    timerDiv.textContent =
+      `${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`;
+    if(--timeLeft < 0) showExplanation();
   },1000);
 }
 
-// ================= ОБРАБОТКА =================
-nextBtn.onclick=()=>{
-  if(!showingExplanation){
-    showExplanation();
-  } else {
+// ===== ОБРАБОТКА =====
+nextBtn.onclick = () => {
+  if(!showingExplanation) showExplanation();
+  else {
     current++;
-    if(current>=questions.length) finish();
+    if(current >= questions.length) finish();
     else loadQuestion();
   }
 };
 
 function showExplanation(){
   clearInterval(timer);
-  showingExplanation=true;
-  nextBtn.textContent="Продолжить";
+  showingExplanation = true;
+  nextBtn.textContent = "Следующий вопрос";
 
-  const q=questions[current];
-  let answer="", earned=0;
+  const q = questions[current];
+  let answer = "";
+  let earned = 0;
 
-  if(q.type==="choice"){
-    const sel=document.querySelector('input[name="answer"]:checked');
-    if(sel) answer=sel.value;
-    if(answer===q.correct) earned=q.points;
+  if(q.type === "choice"){
+    const sel = document.querySelector("input[name='answer']:checked");
+    if(sel) answer = sel.value;
+    if(answer === q.correct) earned = q.points;
   } else {
-    answer=document.getElementById("textAnswer")?.value.trim()||"";
-    if(Array.isArray(q.correct)){
-      if(q.correct.some(c=>c.toLowerCase()===answer.toLowerCase())) earned=q.points;
-    } else {
-      if(answer.toLowerCase()===q.correct.toLowerCase()) earned=q.points;
-    }
+    answer = document.getElementById("textAnswer").value.trim();
+    if(q.correct.some(c=>c.toLowerCase()===answer.toLowerCase()))
+      earned = q.points;
   }
 
-  score+=earned;
-  expl.style.display="block";
-  expl.innerHTML=`
-    <b>Правильный ответ:</b> ${q.correct}<br><br>
-    <b>Комментарий:</b> ${comments[current+1]||"—"}<br><br>
+  totalScore += earned;
+  expl.style.display = "block";
+  expl.innerHTML = `
+    <b>Комментарий:</b> ${comments[current+1] || "—"}<br>
     <b>Баллы:</b> ${earned}
   `;
-
-  userAnswers.push({number:current+1,userAnswer:answer,points:earned});
 }
 
-// ================= ФИНИШ =================
+// ===== ФИНИШ =====
 function finish(){
   quiz.style.display="none";
   result.style.display="block";
-  finalScore.textContent=`Результат: ${score}`;
-  
-  fetch("https://script.google.com/macros/s/AKfycbwTWMqO1ra0Fi9MPVRAfaYJnsOwwE9tj0jUJ30RgGhLhRVP2o-U4hVPQLoR4E7GK6aB/exec", {
-  method: "POST",
-  mode: "no-cors",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  body: new URLSearchParams({
-    firstName: firstName.value,
-    lastName: lastName.value,
-    contact: contact.value,
-    score: score,
-    answers: JSON.stringify(userAnswers)
-  })
-});
-}
+  document.getElementById("score").textContent =
+    `Ваш результат: ${totalScore}`;
 
+  fetch("https://script.google.com/macros/s/AKfycbwTWMqO1ra0Fi9MPVRAfaYJnsOwwE9tj0jUJ30RgGhLhRVP2o-U4hVPQLoR4E7GK6aB/exec",{
+    method:"POST",
+    mode:"no-cors",
+    headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+    body:new URLSearchParams({
+      firstName:firstName.value,
+      lastName:lastName.value,
+      contact:contact.value,
+      score:totalScore
+    })
+  });
+}
 </script>
-</div>
 </body>
 </html>
-
-
-
-
-
-
-
-
