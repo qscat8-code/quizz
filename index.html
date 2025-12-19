@@ -135,6 +135,8 @@ const aDiv = document.getElementById("answers");
 const expl = document.getElementById("explanation");
 const nextBtn = document.getElementById("nextBtn");
 const timerDiv = document.getElementById("timer");
+const resultDiv = document.getElementById("result");
+const scoreDiv = document.getElementById("score");
 
 // ===== СТАРТ =====
 startBtn.onclick = () => {
@@ -218,9 +220,8 @@ function showExplanation(){
 // ===== ФИНИШ =====
 function finish(){
   quiz.style.display="none";
-  result.style.display="block";
-  document.getElementById("score").textContent =
-    `Ваш результат: ${totalScore}`;
+  resultDiv.style.display = "block";
+  scoreDiv.textContent = `Ваш результат: ${totalScore}`;
 
   fetch("https://script.google.com/macros/s/AKfycbwTWMqO1ra0Fi9MPVRAfaYJnsOwwE9tj0jUJ30RgGhLhRVP2o-U4hVPQLoR4E7GK6aB/exec",{
     method:"POST",
@@ -237,3 +238,4 @@ function finish(){
 </script>
 </body>
 </html>
+
