@@ -264,9 +264,8 @@ function finish(){
   resultDiv.style.display = "block";
   scoreDiv.textContent = `Ваш результат: ${totalScore}`;
 
-  fetch("https://script.google.com/macros/s/AKfycbwTWMqO1ra0Fi9MPVRAfaYJnsOwwE9tj0jUJ30RgGhLhRVP2o-U4hVPQLoR4E7GK6aB/exec",{
+  fetch("https://script.google.com/macros/s/AKfycbz-zp106Fr0kvF5CejX0OkbITtFWEhBCDVFKzNYI_RJ54uOrokaQaKAida2AhPp2kDx/exec",{
     method:"POST",
-    mode:"no-cors",
     headers:{ "Content-Type":"application/x-www-form-urlencoded" },
     body:new URLSearchParams({
       firstName:firstName.value,
@@ -283,6 +282,7 @@ function finish(){
 </script>
 </body>
 </html>
+
 
 
 
