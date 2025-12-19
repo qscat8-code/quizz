@@ -275,13 +275,15 @@ function finish(){
       score:totalScore,
       answers: userAnswers.map(a =>
       `${a.question} — ${a.answer} (${a.points})`
-    ).join(" | ")
-  })
-})
+      ).join(" | ")
+    })
+  });
+}
 
 </script>
 </body>
 </html>
+
 
 
 
